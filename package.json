@@ -1,0 +1,15 @@
+{
+  "name": "bible-search-locally",
+  "version": "1.0.0",
+  "description": "Enables anyone to search a locally-stored bible, even if Internet down",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "live-server --watch=./public"
+  },
+  "author": "JeremieLitzler",
+  "license": "MIT",
+  "dependencies": {
+    "live-server": "^1.2.2"
+  }
+}
