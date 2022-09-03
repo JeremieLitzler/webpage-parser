@@ -12,22 +12,26 @@
 <body>
     <header>
         <h1>
-            A smart webpage parser
+            A smart webpage parser, for YouTube channels for example where you may want to list all the links of the vlogs.
         </h1>
     </header>
     <main>
         <section class="inputs">
-            <h2>Select your file</h2>
+            <h2>Step 1 - How to extract the page</h2>
+            <p>Simply, do <i>CTLR+S</i> on the webpage in your browser.</p>
+            <p>For YouTube channel, go to <i>https://www.youtube.com/c/NAME_OF_CHANNEL/<b>videos?view=0&sort=da&flow=grid</b></i> by replacing the <i>NAME_OF_CHANNEL</i> by the name you need</p>
+            <h2>Step 2 - Select your webpage to parse</h2>
             <label for="files">
                 <p>Files:</p>
                 <!-- <input type="file" name="client-file" id="get-files" multiple /> -->
                 <input type="file" name="client-file" id="get-file" />
             </label>
-            <h2>Type your selector</h2>
+            <h2>Step 3 - Type your CSS selector (by default a YouTube channel video list</h2>
             <label for="css-selector">
                 <input type="text" name="css-selector" id="css-selector" value="#items #details #video-title">
             </label>
             <button>Start</button>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/VxhJZp65vmw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </section>
         <section class="results">
         </section>
