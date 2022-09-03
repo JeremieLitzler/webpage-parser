@@ -80,6 +80,10 @@ section.console {
 main {
   overflow-y: scroll;
 }
+iframe {
+  width: 100%;
+  height: 20em;
+}
 
 @media (min-width: 75em) {
   main {
