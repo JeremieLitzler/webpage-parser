@@ -23,11 +23,15 @@
                 <!-- <input type="file" name="client-file" id="get-files" multiple /> -->
                 <input type="file" name="client-file" id="get-file" />
             </label>
-            <h2>Type your selector</h2>
+            <h2>Type your CSS selector</h2>
             <label for="css-selector">
                 <input type="text" name="css-selector" id="css-selector" value="#items #details #video-title">
             </label>
-            <button>Start</button>
+            <label for="enable-markdown">
+                <input type="checkbox" name="enable-markdown" id="enable-markdown">
+                See output as markdown
+            </label>
+            <button>Parse</button>
         </section>
         <section class="results">
         </section>

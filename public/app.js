@@ -1,3 +1,10 @@
+const enableMarkdown = document.querySelector('#enable-markdown');
+console.log('enableMarkdown', enableMarkdown.checked);
+
+enableMarkdown.addEventListener('change', (event) => {
+  console.log('enableMarkdown', enableMarkdown.checked);
+});
+
 /**
  * Append a console element the message
  * @param {string} message
@@ -10,6 +17,30 @@ function logConsole(message) {
   log.innerText = message;
   consoleEl.appendChild(log);
 }
+
+const parseWebPageToMarkdown = (resultEl, nodes) => {
+  const textArea = document.createElement('textarea');
+  textArea.width = '100%';
+  nodes.forEach((element) => {
+    textArea.append(`## ${element.innerText}\r\n\r\n`);
+    textArea.append(
+      `**Lien:** [visionner sur YouTube](${element.href})\r\n\r\n`,
+    );
+  });
+  resultEl.appendChild(textArea);
+};
+
+const parseWebPageToHtml = (resultEl, nodes) => {
+  nodes.forEach((element) => {
+    const block = document.createElement('article');
+    const title = document.createElement('p');
+    title.innerText = element.innerText;
+    const link = document.createElement('a');
+    link.innerText = link.href = element.href;
+    block.appendChild(title).appendChild(link);
+    resultEl.appendChild(block);
+  });
+};
 
 /**
  * Parse the file
@@ -32,17 +63,15 @@ const parseWebPage = (cssSelector, sourceHtml) => {
   }
   console.log(elements);
 
+  const enableMarkdown = document.querySelector('#enable-markdown');
   const resultEl = document.querySelector('.results');
   resultEl.innerHTML = '';
-  elements.forEach((element) => {
-    const block = document.createElement('article');
-    const title = document.createElement('p');
-    title.innerText = element.innerText;
-    const link = document.createElement('a');
-    link.innerText = link.href = element.href;
-    block.appendChild(title).appendChild(link);
-    resultEl.appendChild(block);
-  });
+  if (enableMarkdown.checked) {
+    parseWebPageToMarkdown(resultEl, elements);
+    return;
+  }
+
+  parseWebPageToHtml(resultEl, elements);
 };
 
 /**
