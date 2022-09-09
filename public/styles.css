@@ -113,6 +113,11 @@ section.results a {
   text-align: center;
 }
 
+section.results textarea {
+  width: 100%;
+  height: 100%;
+}
+
 section.inputs {
   grid-area: inputs;
 }
