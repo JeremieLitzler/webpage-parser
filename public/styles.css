@@ -4,6 +4,9 @@
   box-sizing: border-box;
 }
 
+h2 {
+  margin-top: 1em;
+}
 .inputs {
   background-color: aliceblue;
   padding: 2em;
@@ -76,6 +79,10 @@ section.console {
 /*Layout*/
 main {
   overflow-y: scroll;
+}
+iframe {
+  width: 100%;
+  height: 20em;
 }
 
 @media (min-width: 75em) {
