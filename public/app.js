@@ -5,6 +5,20 @@ enableMarkdown.addEventListener('change', (event) => {
   console.log('enableMarkdown', enableMarkdown.checked);
 });
 
+const downloadJson = document.querySelector('#download-json');
+console.log('downloadJson', downloadJson.checked);
+
+downloadJson.addEventListener('change', (event) => {
+  console.log('downloadJson', downloadJson.checked);
+});
+
+const downloadCsv = document.querySelector('#download-csv');
+console.log('downloadCsv', downloadCsv.checked);
+
+downloadCsv.addEventListener('change', (event) => {
+  console.log('downloadCsv', downloadCsv.checked);
+});
+
 /**
  * Append a console element the message
  * @param {string} message
@@ -41,6 +55,56 @@ const parseWebPageToHtml = (resultEl, nodes) => {
     resultEl.appendChild(block);
   });
 };
+const downloadFile = (fileName, content, format) => {
+  const encodedContent = new TextEncoder().encode(content);
+
+  // (A) CREATE BLOB OBJECT
+  var fileBlob = new Blob([encodedContent], { type: format });
+
+  // (B) CREATE DOWNLOAD LINK
+  var url = window.URL.createObjectURL(fileBlob);
+  var anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `${fileName}`;
+  document.body.appendChild(anchor);
+  // (C) "FORCE DOWNLOAD"
+  // NOTE: MAY NOT ALWAYS WORK DUE TO BROWSER SECURITY
+  // BETTER TO LET USERS CLICK ON THEIR OWN
+  anchor.click();
+  setTimeout(() => {
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(anchor);
+  }, 0);
+};
+const makeJson = (nodes) => {
+  const jsonArray = [];
+  nodes.forEach((element) => {
+    const obj = {};
+    obj['title'] = element.innerText;
+    obj['link'] = element.href;
+    obj['downloaded'] = false;
+    obj['notesTaken'] = false;
+    jsonArray.push(JSON.stringify(obj, null, 2));
+  });
+
+  const json = `[${jsonArray.join(',')}]`;
+  console.log(json);
+  return json;
+};
+
+const makeCsv = (nodes) => {
+  const csvArray = ['title;link;downloaded;notesTaken'];
+  nodes.forEach((element) => {
+    let line = '';
+    line += `"${element.innerText}";`;
+    line += `"${element.href}";`;
+    line += 'false;false';
+    csvArray.push(line);
+  });
+  const csv = csvArray.join('\r\n');
+  console.log(csv);
+  return csv;
+};
 
 /**
  * Parse the file
@@ -66,6 +130,14 @@ const parseWebPage = (cssSelector, sourceHtml) => {
   const enableMarkdown = document.querySelector('#enable-markdown');
   const resultEl = document.querySelector('.results');
   resultEl.innerHTML = '';
+  if (downloadJson.checked) {
+    const content = downloadAsJson(elements);
+    downloadFile('channel.json', content, 'application/json;charset=utf-8');
+  }
+  if (downloadCsv.checked) {
+    const content = downloadAsCsv(elements);
+    downloadFile('channel.csv', content, 'text/plain;charset=utf-8');
+  }
   if (enableMarkdown.checked) {
     parseWebPageToMarkdown(resultEl, elements);
     return;
