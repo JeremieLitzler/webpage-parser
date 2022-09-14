@@ -19,6 +19,13 @@ downloadCsv.addEventListener('change', (event) => {
   console.log('downloadCsv', downloadCsv.checked);
 });
 
+const downloadMarkdown = document.querySelector('#download-md');
+console.log('downloadMarkdown', downloadMarkdown.checked);
+
+downloadMarkdown.addEventListener('change', (event) => {
+  console.log('downloadMarkdown', downloadMarkdown.checked);
+});
+
 /**
  * Append a console element the message
  * @param {string} message
@@ -32,14 +39,22 @@ function logConsole(message) {
   consoleEl.appendChild(log);
 }
 
+const makeMarkdown = (nodes) => {
+  const markdownArr = [];
+  nodes.forEach((element) => {
+    markdownArr.push(`## ${element.innerText}\r\n\r\n`);
+    markdownArr.push(
+      `**Lien:** [visionner sur YouTube](${element.href})\r\n\r\n`,
+    );
+  });
+  return markdownArr;
+};
 const parseWebPageToMarkdown = (resultEl, nodes) => {
   const textArea = document.createElement('textarea');
   textArea.width = '100%';
-  nodes.forEach((element) => {
-    textArea.append(`## ${element.innerText}\r\n\r\n`);
-    textArea.append(
-      `**Lien:** [visionner sur YouTube](${element.href})\r\n\r\n`,
-    );
+  const markdownArr = makeMarkdown(nodes);
+  markdownArr.forEach((line) => {
+    textArea.append(line);
   });
   resultEl.appendChild(textArea);
 };
@@ -76,6 +91,7 @@ const downloadFile = (fileName, content, format) => {
     document.body.removeChild(anchor);
   }, 0);
 };
+
 const makeJson = (nodes) => {
   const jsonArray = [];
   nodes.forEach((element) => {
@@ -131,12 +147,20 @@ const parseWebPage = (cssSelector, sourceHtml) => {
   const resultEl = document.querySelector('.results');
   resultEl.innerHTML = '';
   if (downloadJson.checked) {
-    const content = downloadAsJson(elements);
+    const content = makeJson(elements);
     downloadFile('channel.json', content, 'application/json;charset=utf-8');
   }
   if (downloadCsv.checked) {
-    const content = downloadAsCsv(elements);
+    const content = makeCsv(elements);
     downloadFile('channel.csv', content, 'text/plain;charset=utf-8');
+  }
+  if (downloadMarkdown.checked) {
+    const contentArr = makeMarkdown(elements);
+    downloadFile(
+      'channel.md',
+      contentArr.join('\r\n', ''),
+      'text/plain;charset=utf-8',
+    );
   }
   if (enableMarkdown.checked) {
     parseWebPageToMarkdown(resultEl, elements);
