@@ -64,7 +64,7 @@ const saveNewFile = (fileOjb) => {
       // BETTER TO LET USERS CLICK ON THEIR OWN
       anchor.click();
       const log = document.createElement('p');
-      log.innerText = `Downloaded shrinked ${sourceFile}`;
+      log.innerText = `Downloaded shrinked ${fileOjb.channel}`;
       setTimeout(() => {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(anchor);
@@ -100,6 +100,7 @@ startBtn.addEventListener('click', function (event) {
   // console.log(files);
   let wait = 800;
   const waitStep = 800;
+  console.table(files);
   files.forEach((file) => {
     delayBy(wait).then(() => {
       console.log('processFile', file);
