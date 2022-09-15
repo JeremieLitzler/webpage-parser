@@ -146,10 +146,14 @@ const parseWebPage = (cssSelector, fileName, sourceHtml) => {
   const enableMarkdown = document.querySelector('#enable-markdown');
   const resultEl = document.querySelector('.results');
   resultEl.innerHTML = '';
-  const outputFileName = fileName.replace("-channel.htm","");
+  const outputFileName = fileName.replace('-channel.htm', '');
   if (downloadJson.checked) {
     const content = makeJson(elements);
-    downloadFile(`${outputFileName}.json`, content, 'application/json;charset=utf-8');
+    downloadFile(
+      `${outputFileName}.json`,
+      content,
+      'application/json;charset=utf-8',
+    );
   }
   if (downloadCsv.checked) {
     const content = makeCsv(elements);
@@ -158,7 +162,7 @@ const parseWebPage = (cssSelector, fileName, sourceHtml) => {
   if (downloadMarkdown.checked) {
     const contentArr = makeMarkdown(elements);
     downloadFile(
-      `${outputFileName.}.md`,
+      `${outputFileName}.md`,
       contentArr.join('\r\n', ''),
       'text/plain;charset=utf-8',
     );
