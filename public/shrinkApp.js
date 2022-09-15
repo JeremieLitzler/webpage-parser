@@ -29,8 +29,8 @@ const delayBy = (time) => {
  * @param {string} bible The bible code
  * @param {string} sourceFile The file to fetch and shrink
  */
-const saveNewFile = (sourceFile) => {
-  fetch(sourceFile)
+const saveNewFile = (fileOjb) => {
+  fetch(fileOjb.sourceFile)
     .then((response) => response.text())
     .then((html) => {
       var parser = new DOMParser();
@@ -57,7 +57,7 @@ const saveNewFile = (sourceFile) => {
       var url = window.URL.createObjectURL(fileBlob);
       var anchor = document.createElement('a');
       anchor.href = url;
-      anchor.download = `${sourceFile}`;
+      anchor.download = `${fileOjb.channel}`;
       document.body.appendChild(anchor);
       // (C) "FORCE DOWNLOAD"
       // NOTE: MAY NOT ALWAYS WORK DUE TO BROWSER SECURITY
@@ -81,7 +81,10 @@ const saveNewFile = (sourceFile) => {
 const getFileList = () => {
   const files = [];
   channels.forEach((channel) => {
-    files.push(`youtube-channels/original/${channel}.html`);
+    files.push({
+      sourceFile: `youtube-channels/original/${channel}.html`,
+      channel: channel,
+    });
   });
   return files;
 };
