@@ -127,7 +127,7 @@ const makeCsv = (nodes) => {
  * @param {string} sourceHtml The relative web URI containing the data to parse
  * @returns the data requested
  */
-const parseWebPage = (cssSelector, sourceHtml) => {
+const parseWebPage = (cssSelector, fileName, sourceHtml) => {
   const parser = new DOMParser();
 
   // Parse the text
@@ -148,16 +148,16 @@ const parseWebPage = (cssSelector, sourceHtml) => {
   resultEl.innerHTML = '';
   if (downloadJson.checked) {
     const content = makeJson(elements);
-    downloadFile('channel.json', content, 'application/json;charset=utf-8');
+    downloadFile(`${fileName}.json`, content, 'application/json;charset=utf-8');
   }
   if (downloadCsv.checked) {
     const content = makeCsv(elements);
-    downloadFile('channel.csv', content, 'text/plain;charset=utf-8');
+    downloadFile(`${fileName}.csv`, content, 'text/plain;charset=utf-8');
   }
   if (downloadMarkdown.checked) {
     const contentArr = makeMarkdown(elements);
     downloadFile(
-      'channel.md',
+      `${fileName}.md`,
       contentArr.join('\r\n', ''),
       'text/plain;charset=utf-8',
     );
@@ -182,7 +182,7 @@ const processeFile = (cssSelector) => {
     reader.readAsText(file, 'UTF-8');
     reader.onload = function (evt) {
       const filesContents = evt.target.result;
-      parseWebPage(cssSelector, filesContents);
+      parseWebPage(cssSelector, file.name, filesContents);
     };
     reader.onerror = function (evt) {
       throw new Error('error reading file');
