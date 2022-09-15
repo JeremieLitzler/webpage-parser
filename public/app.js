@@ -146,18 +146,19 @@ const parseWebPage = (cssSelector, fileName, sourceHtml) => {
   const enableMarkdown = document.querySelector('#enable-markdown');
   const resultEl = document.querySelector('.results');
   resultEl.innerHTML = '';
+  const outputFileName = fileName.replace("-channel.htm","");
   if (downloadJson.checked) {
     const content = makeJson(elements);
-    downloadFile(`${fileName}.json`, content, 'application/json;charset=utf-8');
+    downloadFile(`${outputFileName}.json`, content, 'application/json;charset=utf-8');
   }
   if (downloadCsv.checked) {
     const content = makeCsv(elements);
-    downloadFile(`${fileName}.csv`, content, 'text/plain;charset=utf-8');
+    downloadFile(`${outputFileName}.csv`, content, 'text/plain;charset=utf-8');
   }
   if (downloadMarkdown.checked) {
     const contentArr = makeMarkdown(elements);
     downloadFile(
-      `${fileName}.md`,
+      `${outputFileName.}.md`,
       contentArr.join('\r\n', ''),
       'text/plain;charset=utf-8',
     );
