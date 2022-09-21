@@ -40,11 +40,14 @@ function logConsole(message) {
 }
 
 const makeMarkdown = (nodes) => {
+  const cssSelectors = getCssSelectors();
   const markdownArr = [];
   nodes.forEach((element) => {
-    markdownArr.push(`## ${element.innerText}\r\n\r\n`);
+    const title = element.querySelector(cssSelectors.child1);
+    const published = element.querySelector(cssSelectors.child2);
+    markdownArr.push(`## ${title.innerText}\r\n\r\n`);
     markdownArr.push(
-      `**Lien:** [visionner sur YouTube](${element.href})\r\n\r\n`,
+      `**Lien:** [visionner sur YouTube](${title.href})\r\n\r\n`,
     );
   });
   return markdownArr;
@@ -93,13 +96,17 @@ const downloadFile = (fileName, content, format) => {
 };
 
 const makeJson = (nodes) => {
+  const cssSelectors = getCssSelectors();
   const jsonArray = [];
   nodes.forEach((element) => {
+    const title = element.querySelector(cssSelectors.child1);
+    const published = element.querySelector(cssSelectors.child2);
+
     const obj = {};
-    obj['title'] = element.innerText;
-    obj['link'] = element.href;
-    obj['downloaded'] = false;
-    obj['notesTaken'] = false;
+    obj['Title'] = title.innerText;
+    obj['VlogLink'] = title.href;
+    obj['State'] = false;
+    obj['Published'] = published.innerText;
     jsonArray.push(JSON.stringify(obj, null, 2));
   });
 
@@ -109,14 +116,22 @@ const makeJson = (nodes) => {
 };
 
 const makeCsv = (nodes) => {
-  const csvArray = ['title;link;downloaded;notesTaken'];
+  const cssSelectors = getCssSelectors();
+  const csvArray = [];
+
   nodes.forEach((element) => {
+    const title = element.querySelector(cssSelectors.child1);
+    const published = element.querySelector(cssSelectors.child2);
+
     let line = '';
-    line += `"${element.innerText}";`;
-    line += `"${element.href}";`;
-    line += 'false;false';
+    line += `"${title.innerText.replace('"', '').replace(';', ' -').trim()}";`;
+    line += ``;
+    line += `"${title.href}";`;
+    line += `"${published.innerText.trim()}";`;
     csvArray.push(line);
   });
+  const sortedArr = csvArray.sort();
+  sortedArr.unshift('Title;State;VlogLink;Published'); //add headers first
   const csv = csvArray.join('\r\n');
   console.log(csv);
   return csv;
@@ -127,7 +142,7 @@ const makeCsv = (nodes) => {
  * @param {string} sourceHtml The relative web URI containing the data to parse
  * @returns the data requested
  */
-const parseWebPage = (cssSelector, fileName, sourceHtml) => {
+const parseWebPage = (fileName, sourceHtml) => {
   const parser = new DOMParser();
 
   // Parse the text
@@ -136,10 +151,14 @@ const parseWebPage = (cssSelector, fileName, sourceHtml) => {
   // You can now even select part of that html as you would in the regular DOM
   // Example:
   // const elements = doc.querySelectorAll('#items #details #video-title');//test
-  const elements = doc.querySelectorAll(`${cssSelector}`);
+  // published = #metadata-line > span:nth-child(2)
+  const cssSelectors = getCssSelectors();
+  const elements = doc.querySelectorAll(`${cssSelectors.parent}`);
 
   if (elements === null || elements.length === 0) {
-    logConsole(`The selector "${cssSelector}" yielded no node from the page.`);
+    logConsole(
+      `The selector "${cssSelectors.parent}" yielded no node from the page.`,
+    );
   }
   console.log(elements);
 
@@ -178,8 +197,8 @@ const parseWebPage = (cssSelector, fileName, sourceHtml) => {
 /**
  * Build a list of filenames to fetch to shrink
  */
-const processeFile = (cssSelector) => {
-  var fileInput = document.getElementById('get-file');
+const processeFile = () => {
+  var fileInput = document.getElementById('get-files');
   for (i = 0; i < fileInput.files.length; i++) {
     let file = fileInput.files[i];
     // do things with file
@@ -187,7 +206,7 @@ const processeFile = (cssSelector) => {
     reader.readAsText(file, 'UTF-8');
     reader.onload = function (evt) {
       const filesContents = evt.target.result;
-      parseWebPage(cssSelector, file.name, filesContents);
+      parseWebPage(file.name, filesContents);
     };
     reader.onerror = function (evt) {
       throw new Error('error reading file');
@@ -195,11 +214,30 @@ const processeFile = (cssSelector) => {
   }
 };
 
-const startBtn = document.querySelector('button');
-startBtn.addEventListener('click', function (event) {
+const getCssSelectors = () => {
   const cssSelectorInput = document.querySelector('#css-selector');
   if (cssSelectorInput.value === null) {
     logConsole('A selector must be provided...');
+    return;
   }
-  processeFile(cssSelectorInput.value);
+  const cssSelectorChild1Input = document.querySelector('#css-selector-child1');
+  if (cssSelectorChild1Input.value === null) {
+    logConsole('A child 1 selector must be provided...');
+    return;
+  }
+  const cssSelectorChild2Input = document.querySelector('#css-selector-child2');
+  if (cssSelectorChild2Input.value === null) {
+    logConsole('A child 2 selector must be provided...');
+    return;
+  }
+  return {
+    parent: cssSelectorInput.value,
+    child1: cssSelectorChild1Input.value,
+    child2: cssSelectorChild2Input.value,
+  };
+};
+
+const startBtn = document.querySelector('button');
+startBtn.addEventListener('click', function (event) {
+  processeFile();
 });
