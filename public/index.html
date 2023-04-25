@@ -21,41 +21,69 @@
     </header>
     <main>
         <section class="inputs">
-            <h2>Step 1 - How to extract the page</h2>
-            <p>Simply, do <i>CTLR+S</i> on the webpage in your browser.</p>
-            <p>For YouTube channel, go to <i>https://www.youtube.com/c/NAME_OF_CHANNEL/<b>videos?view=0&sort=da&flow=grid</b></i> by replacing the <i>NAME_OF_CHANNEL</i> by the name you need</p>
-            <h2>Step 2 - Select your webpage to parse</h2>
-            <label for="files">
-                <p>Files:</p>
-                <input type="file" name="client-file" id="get-files" multiple />
-                <!-- <input type="file" name="client-file" id="get-file" /> -->
-            </label>
-            <h2>Step 3 - Type your CSS selector (by default a YouTube channel video list</h2>
-            <label for="css-selector">
-                <input type="text" name="css-selector" id="css-selector" value="#items #details">
-            </label>
-            <label for="css-selector-child1">
+            <article class="step step1">
+                <h2>Step 1 - How to extract the page</h2>
+                <p>Simply, do <i>CTLR+S</i> on the webpage in your browser.</p>
+                <p>For YouTube channel, go to <i>https://www.youtube.com/c/NAME_OF_CHANNEL/<b>videos?view=0&sort=da&flow=grid</b></i> by replacing the <i>NAME_OF_CHANNEL</i> by the name you need</p>
+            </article>
+            <article class="step step2">
+                <h2>Step 2 - Select your webpage to parse</h2>
+                <label for="files">
+                    <p>Files:</p>
+                    <input type="file" name="client-file" id="get-files" multiple />
+                    <!-- <input type="file" name="client-file" id="get-file" /> -->
+                </label>
+            </article>
+            <article class="step step3">
+                <h2>Step 3 - Type your CSS selectors</h2>
+                <p>For a YouTube channel video list, use the following (*):</p>
+                <ul>
+                    <li>for the list: <em>ytd-rich-grid-renderer ytd-rich-grid-media</em></li>
+                    <li>for the other, it remains unchanged. otherwise, do a little F12 and inspect the HTML to find the CSS selectors</li>
+                </ul>
+                <p>For a search, the selectors the following (*):</p>
+                <ul>
+                    <li>for the list: <em>ytd-section-list-renderer ytd-video-renderer</em></li>
+                    <li>for the other, it remains unchanged. otherwise, do a little F12 and inspect the HTML to find the CSS selectors</li>
+                </ul>
+                <label for="css-selector">
+                    Selector for "list of vlogs":
+                </label>
+                <input type="text" name="css-selector" id="css-selector" value="ytd-section-list-renderer ytd-video-renderer">
+                <label for="css-selector-child1">
+                    Selector for "vlog title"
+                </label>
                 <input type="text" name="css-selector" id="css-selector-child1" value="#video-title">
-            </label>
-            <label for="css-selector-child2">
-                <input type="text" name="css-selector" id="css-selector-child2" value="#metadata-line > span:nth-child(2)">
-            </label>
-            <label for="enable-markdown">
-                <input type="checkbox" name="enable-markdown" id="enable-markdown" checked />
-                See output as markdown
-            </label>
-            <label for="download-json">
-                <input type="checkbox" name="download-json" id="download-json" checked />
-                Download as Json
-            </label>
-            <label for="download-csv">
-                <input type="checkbox" name="download-csv" id="download-csv" checked />
-                Download as CSV
-            </label>
-            <label for="download-md">
-                <input type="checkbox" name="download-md" id="download-md" checked />
-                Download as Markdown
-            </label>
+                <label for="css-selector-child2">
+                    Selector for "vlog duration"
+                </label>
+                <input type="text" name="css-selector" id="css-selector-child2" value="ytd-thumbnail-overlay-time-status-renderer #text">
+                <label for="css-selector-child3">
+                    Selector for "channel name"
+                </label>
+                <input type="text" name="css-selector" id="css-selector-child3" value="ytd-channel-name a">
+                </label>
+                <em>(*) : subject to change of YouTube codebase of course</em>
+            </article>
+            <article class="checkboxes">
+                <label for="enable-markdown">
+                    <input type="checkbox" name="enable-markdown" id="enable-markdown" />
+                    See output as markdown
+                </label>
+                <label for="download-json">
+                    <input type="checkbox" name="download-json" id="download-json" />
+                    Download as Json
+                </label>
+                <label for="download-csv">
+                    <input type="checkbox" name="download-csv" id="download-csv" checked />
+                    Download as CSV
+                </label>
+                <label for="download-md">
+                    <input type="checkbox" name="download-md" id="download-md" />
+                    Download as Markdown
+                </label>
+
+            </article>
             <button>Parse</button>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/VxhJZp65vmw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </section>

@@ -121,17 +121,43 @@ const makeCsv = (nodes) => {
 
   nodes.forEach((element) => {
     const title = element.querySelector(cssSelectors.child1);
-    const published = element.querySelector(cssSelectors.child2);
+    const vlogDuration = element.querySelector(cssSelectors.child2);
+    const channelName = element.querySelector(cssSelectors.child3);
 
+    if (channelName === null) {
+      console.warn("HTML doesn't contain the channel element");
+    }
+
+    if (title === null) {
+      throw new EvalError(`${cssSelectors.child1} for title wasn't found`);
+    }
     let line = '';
-    line += `"${title.innerText.replace('"', '').replace(';', ' -').trim()}";`;
+    line += `"${
+      channelName === null
+        ? 'no channel'
+        : channelName.innerText.replace('"', '').replace(';', ' -').trim()
+    }";`;
     line += ``;
-    line += `"${title.href}";`;
-    line += `"${published.innerText.trim()}";`;
+    line += `"${
+      title === null
+        ? 'no title'
+        : title.innerText.replace('"', '').replace(';', ' -').trim()
+    }";`;
+    line += ``;
+    line += `"${title === null ? 'no link' : title.href}";`;
+
+    if (vlogDuration === null) {
+      console.warn(
+        `Current element isn't a vlog ${cssSelectors.child1} for vlogDuration wasn't found`,
+      );
+    }
+    line += `"${
+      vlogDuration === null ? 'no duration' : vlogDuration.innerText.trim()
+    }";`;
     csvArray.push(line);
   });
   const sortedArr = csvArray.sort();
-  sortedArr.unshift('Title;State;VlogLink;Published'); //add headers first
+  sortedArr.unshift('Channel;Title;State;VlogLink;VlogDuration'); //add headers first
   const csv = csvArray.join('\r\n');
   console.log(csv);
   return csv;
@@ -230,10 +256,16 @@ const getCssSelectors = () => {
     logConsole('A child 2 selector must be provided...');
     return;
   }
+  const cssSelectorChild3Input = document.querySelector('#css-selector-child3');
+  if (cssSelectorChild3Input.value === null) {
+    logConsole('A child 3 selector must be provided...');
+    return;
+  }
   return {
     parent: cssSelectorInput.value,
     child1: cssSelectorChild1Input.value,
     child2: cssSelectorChild2Input.value,
+    child3: cssSelectorChild3Input.value,
   };
 };
 
