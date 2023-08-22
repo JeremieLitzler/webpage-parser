@@ -115,47 +115,94 @@ const makeJson = (nodes) => {
   return json;
 };
 
-const makeCsv = (nodes) => {
-  const cssSelectors = getCssSelectors();
+const throwIfTitleIsNull = (titleNode) => {
+  if (titleNode === null) {
+    throw new EvalError(`${cssSelectors.child1} for title wasn't found`);
+  }
+};
+
+const writeWarningsForCsv = (
+  channelNameNode,
+  vlogDurationNode,
+  cssSelectors,
+) => {
+  if (channelNameNode === null) {
+    console.warn("HTML doesn't contain the channel element");
+  }
+  if (vlogDurationNode === null) {
+    console.warn(
+      `Current element isn't a vlog ${cssSelectors.child1} for vlogDuration wasn't found`,
+    );
+  }
+};
+
+const parseChannelName = (channelNameNode) => {
+  const channelName = `"${
+    channelNameNode === null
+      ? 'no channel'
+      : channelNameNode.innerText.replace('"', '').replace(';', ' -').trim()
+  }";`;
+  return channelName;
+};
+
+const parseVlogTitle = (titleNode) => {
+  const vlogTitle = `"${
+    titleNode === null || titleNode === undefined
+      ? 'no title'
+      : titleNode.title.replace('"', '').replace(';', ' -').trim()
+  }";`;
+
+  return vlogTitle;
+};
+
+const parseVlogLink = (titleNode) => {
+  console.log('In parseVlogLink...');
+  const vlogLink = `"${
+    titleNode === null || titleNode === undefined ? 'no link' : titleNode.href
+  }";`;
+  return vlogLink;
+};
+
+const parseVlogDuration = (vlogDurationNode) => {
+  let vlogDuration = `"${
+    vlogDurationNode === null
+      ? 'no duration'
+      : vlogDurationNode.innerText.trim()
+  }";`;
+  // one ":" means the vlog is less than 60 min or 01:00:00
+  const durationHasHours = (vlogDuration.match(/:/g) || []).length > 1;
+  if (!durationHasHours) {
+    vlogDuration = `00:${vlogDuration}`;
+  }
+  return vlogDuration;
+};
+
+const makeCsvArray = (nodes) => {
   const csvArray = [];
+  const cssSelectors = getCssSelectors();
 
   nodes.forEach((element) => {
-    const title = element.querySelector(cssSelectors.child1);
-    const vlogDuration = element.querySelector(cssSelectors.child2);
-    const channelName = element.querySelector(cssSelectors.child3);
+    const titleNode = element.querySelector(cssSelectors.child1);
+    const vlogDurationNode = element.querySelector(cssSelectors.child2);
+    const channelNameNode = element.querySelector(cssSelectors.child3);
 
-    if (channelName === null) {
-      console.warn("HTML doesn't contain the channel element");
-    }
+    throwIfTitleIsNull(titleNode);
+    writeWarningsForCsv(channelNameNode, vlogDurationNode, cssSelectors);
 
-    if (title === null) {
-      throw new EvalError(`${cssSelectors.child1} for title wasn't found`);
-    }
     let line = '';
-    line += `"${
-      channelName === null
-        ? 'no channel'
-        : channelName.innerText.replace('"', '').replace(';', ' -').trim()
-    }";`;
+    line += parseChannelName(channelNameNode);
     line += ``;
-    line += `"${
-      title === null
-        ? 'no title'
-        : title.innerText.replace('"', '').replace(';', ' -').trim()
-    }";`;
+    line += parseVlogTitle(titleNode);
     line += ``;
-    line += `"${title === null ? 'no link' : title.href}";`;
-
-    if (vlogDuration === null) {
-      console.warn(
-        `Current element isn't a vlog ${cssSelectors.child1} for vlogDuration wasn't found`,
-      );
-    }
-    line += `"${
-      vlogDuration === null ? 'no duration' : vlogDuration.innerText.trim()
-    }";`;
+    line += parseVlogLink(titleNode); //VlogLink
+    line += parseVlogDuration(vlogDurationNode);
     csvArray.push(line);
   });
+  return csvArray;
+};
+
+const makeCsv = (nodes) => {
+  const csvArray = makeCsvArray(nodes);
   const sortedArr = csvArray.sort();
   sortedArr.unshift('Channel;Title;State;VlogLink;VlogDuration'); //add headers first
   const csv = csvArray.join('\r\n');
